@@ -1,5 +1,5 @@
 {
-  description = "junbitsu - Zero-touch device provisioning";
+  description = "junbitsu — Zero-Touch Device Provisioning";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
@@ -15,8 +15,8 @@
 
   outputs = { self, nixpkgs, substrate, devenv }:
   let
-    allSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-    forAllSystems = nixpkgs.lib.genAttrs allSystems;
+    systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+    forAllSystems = nixpkgs.lib.genAttrs systems;
   in {
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
@@ -32,10 +32,6 @@
 
     overlays.default = final: prev: {
       junbitsu = self.packages.${final.system}.default;
-    };
-
-    homeManagerModules.default = import ./module {
-      hmHelpers = import "${substrate}/lib/hm-service-helpers.nix" { lib = nixpkgs.lib; };
     };
 
     devShells = forAllSystems (system: let
